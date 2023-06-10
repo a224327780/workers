@@ -1,0 +1,11 @@
+name = "cjy"
+main = "src/index.js"
+compatibility_date = "2023-06-10"
+
+[triggers]
+crons = ["0 */1 * * *"]
+
+[[kv_namespaces]]
+binding = "DB"
+id = "33a9602a1d6e4583b99aabf1adc6083d"
+preview_id = "33a9602a1d6e4583b99aabf1adc6083d"
