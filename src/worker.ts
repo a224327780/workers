@@ -106,11 +106,12 @@ class Subscribe {
         return new Response(YAML.stringify(code));
     }
 
-    async convert(url, name) {
+    async convert(url, name, force) {
         const subscribeNodeKey = `${this.subscribeNodeName}_${name}`
         const value = await this._kv.get(subscribeNodeKey)
         let data = []
-        if (value !== null && value !== '[]') {
+        console.log(force)
+        if (value !== null && value !== '[]' && force !== '1') {
             data = JSON.parse(value)
         } else {
             if (url.includes('share.cjy.me')) {
@@ -169,7 +170,7 @@ router.post('/save', async (request) => {
 
 router.get('/convert', async (request) => {
     const query = request.query
-    return await subscribe.convert(query['url'], query['name'])
+    return await subscribe.convert(query['url'], query['name'], query['force'])
 });
 
 router.get('/update', async (request) => {

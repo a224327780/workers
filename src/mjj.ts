@@ -18,7 +18,7 @@ const toClash = (item) => {
         "uuid": item['id'],
         "alterId": item['aid'],
         "cipher": "auto",
-        "tls": item['tls'] === undefined || item['tls'] === 'none',
+        "tls": item['tls'] !== undefined && item['tls'] !== 'none',
         "skip-cert-verify": true,
     }
     if (network === 'ws') {
