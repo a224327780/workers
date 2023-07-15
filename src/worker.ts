@@ -100,7 +100,7 @@ class Subscribe {
 
         if (is_dev) {
             for (let rule in DevClashRule) {
-                code['rules'].splice(0, 0, rule)
+                code['rules'].splice(0, 0, DevClashRule[rule])
             }
         }
         return new Response(YAML.stringify(code));
