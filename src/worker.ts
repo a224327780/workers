@@ -32,13 +32,13 @@ class Subscribe {
 
         let cookie = await this._kv.get(this.mjjCookieName)
         if (cookie === null) {
-            cookie = await login(env.SECRET_USERNAME, env.SECRET_PASSWORD)
+            cookie = await login(env.SECRET_MJJ_USERNAME, env.SECRET_MJJ_PASSWORD)
             if (cookie !== null) {
                 console.log(`Logged in successfully! \nCookie: ${cookie}`)
                 await this._kv.put(this.mjjCookieName, cookie, {expirationTtl: 3600 * 22})
                 return
             }
-            console.log(`[${env.SECRET_USERNAME}] Login Fail.`)
+            console.log(`[${env.SECRET_MJJ_USERNAME}] Login Fail.`)
         }
         if (cookie !== null) {
             this.mjjCookie = cookie
@@ -121,6 +121,7 @@ class Subscribe {
             console.log(`[${name}] 节点数量: ${data.length}`)
             await this._kv.put(subscribeNodeKey, JSON.stringify(data))
         }
+        data.sort((a, b) => a.name.localeCompare(b.name));
         return this.do_response(YAML.stringify({proxies: data}), {'headers': this.jsonHeader})
     }
 

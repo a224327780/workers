@@ -1,0 +1,23 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - subscribe
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Publish
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          secrets: |
+            SECRET_MJJ_USERNAME
+            SECRET_MJJ_PASSWORD
+        env:
+          SECRET_MJJ_USERNAME: ${{ secrets.MJJ_USERNAME }}
+          SECRET_MJJ_PASSWORD: ${{ secrets.MJJ_PASSWORD }}
