@@ -36,7 +36,7 @@ class Subscribe {
             cookie = await login(env.SECRET_MJJ_USERNAME, env.SECRET_MJJ_PASSWORD)
             if (cookie !== null) {
                 console.log(`Logged in successfully! \nCookie: ${cookie}`)
-                await this._kv.put(this.mjjCookieName, cookie, {expirationTtl: 3600 * 4})
+                await this._kv.put(this.mjjCookieName, cookie, {expirationTtl: 3600 * 5})
                 return
             }
             console.log(`[${env.SECRET_MJJ_USERNAME}] Login Fail.`)
@@ -45,7 +45,7 @@ class Subscribe {
         await this.sleep(2)
     }
 
-    sleep(ms) {
+     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms * 1000));
     }
 
@@ -88,8 +88,9 @@ class Subscribe {
                 continue
             }
             const url = encodeURIComponent(subscribes[i])
+            const domain = this._request.url.match(/^https?:\/\/([^/:?#]+)(?=[/:?#]|$)/i);
             let provider = JSON.parse(JSON.stringify(this.providerTemplate))
-            provider['url'] = `${this.trim(this._request.url, '/')}/convert?url=${url}&name=${i}`
+            provider['url'] = `${domain[0]}/convert?url=${url}&name=${i}`
             provider['path'] = `provider1/${i}.yaml`
             _proxiesNames.push(i)
             code['proxy-providers'][i] = provider
