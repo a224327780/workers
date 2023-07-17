@@ -32,17 +32,21 @@ class Subscribe {
 
         let cookie = await this._kv.get(this.mjjCookieName)
         if (cookie === null) {
+            console.log(`[${env.SECRET_MJJ_USERNAME}] start login.`)
             cookie = await login(env.SECRET_MJJ_USERNAME, env.SECRET_MJJ_PASSWORD)
             if (cookie !== null) {
                 console.log(`Logged in successfully! \nCookie: ${cookie}`)
-                await this._kv.put(this.mjjCookieName, cookie, {expirationTtl: 3600 * 22})
+                await this._kv.put(this.mjjCookieName, cookie, {expirationTtl: 3600 * 4})
                 return
             }
             console.log(`[${env.SECRET_MJJ_USERNAME}] Login Fail.`)
         }
-        if (cookie !== null) {
-            this.mjjCookie = cookie
-        }
+        this.mjjCookie = cookie
+        await this.sleep(2)
+    }
+
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms * 1000));
     }
 
     trim(str, char) {
@@ -115,6 +119,9 @@ class Subscribe {
             data = JSON.parse(value)
         } else {
             if (url.includes('share.cjy.me')) {
+                if(this.mjjCookie === null){
+                    await this.init(this._env, this._request)
+                }
                 data = await get_nodes(this.mjjCookie)
             } else {
                 data = await this.update_subscribe_by_url(url)
@@ -153,7 +160,7 @@ class Subscribe {
             const data = YAML.parse(html)
             return data['proxies']
         }
-        return []
+        return [{'name': '订阅失败', 'type': 'vmess', 'server': '1.1.1.1', 'port': 1}]
     }
 
     do_response(data, init = {}) {
