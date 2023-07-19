@@ -72,6 +72,7 @@ class Subscribe {
         }
         const subscribes = JSON.parse(value)
         const userAgent = this._request.headers.get('User-Agent')
+        console.log(userAgent)
         let code = YAML.parse(DefaultClashYml)
         let _proxiesNames = []
 
@@ -84,7 +85,7 @@ class Subscribe {
         ]
         let j = 2
         for (let i in subscribes) {
-            if (userAgent && !userAgent.includes('meta') && i === 'BEST') {
+            if (userAgent && !userAgent.toLowerCase().includes('meta') && i === 'BEST') {
                 continue
             }
             const url = encodeURIComponent(subscribes[i])
@@ -161,7 +162,7 @@ class Subscribe {
             const data = YAML.parse(html)
             return data['proxies']
         }
-        return [{'name': '订阅失败', 'type': 'vmess', 'server': '1.1.1.1', 'port': 1}]
+        return [{'name': '订阅失败', 'type': 'vmess', 'server': '1.1.1.1', 'port': 1111, 'uuid': 'c478d142-03d9-32d0-8cd4-6e88f22e47a1', 'cipher': 'auto'}]
     }
 
     do_response(data, init = {}) {
