@@ -37,6 +37,16 @@ const toClash = (item) => {
     return data
 }
 
+const get_remain_traffic = async (cookie) => {
+    let response = await fetch(`${base_api}/users/userinfo/`, {headers: {Cookie: cookie}});
+    let html = await response.text()
+    const $ = cheerio.load(html)
+    const items = $('article.is-warning code')
+    // const a = $(items[1]).text()
+    const b = $(items[2]).text()
+    return `${b} 剩余流量`
+}
+
 export const get_nodes = async (cookie) => {
     let response = await fetch(node_url, {headers: {Cookie: cookie}});
     let html = await response.text()
@@ -59,6 +69,8 @@ export const get_nodes = async (cookie) => {
             console.log(e)
         }
     }
+    clashData.unshift(clashData[0])
+    clashData[0]['name'] = await get_remain_traffic(cookie)
     return clashData
 }
 

@@ -116,7 +116,6 @@ class Subscribe {
         const subscribeNodeKey = `${this.subscribeNodeName}_${name}`
         const value = await this._kv.get(subscribeNodeKey)
         let data = []
-        console.log(force)
         if (value !== null && value !== '[]' && force !== '1') {
             data = JSON.parse(value)
         } else {

@@ -16,4 +16,4 @@ id = "1e41e1aadc90483d9dd841bfb24f4768"
 preview_id = "1e41e1aadc90483d9dd841bfb24f4768"
 
 [triggers]
-crons = ["0 */6 * * *"]
+crons = ["0 */4 * * *"]
