@@ -25,9 +25,8 @@ dns:
     - 1.1.1.1
     - 223.5.5.5
   nameserver:
-    - https://doh.apad.pro/dns-query
     - https://1.15.50.48/verse
-    - https://cn-south.iqiqzz.com/cdn
+    - https://doh.apad.pro/dns-query
     - https://106.52.218.142/verse
   fallback:
     - https://1.1.1.1/dns-query
