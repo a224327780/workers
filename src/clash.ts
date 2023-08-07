@@ -25,10 +25,12 @@ dns:
     - 1.1.1.1
     - 223.5.5.5
   nameserver:
+    - https://dns.cooluc.com/dns-query
     - https://1.15.50.48/verse
     - https://doh.apad.pro/dns-query
     - https://106.52.218.142/verse
   fallback:
+    - https://dns.nextdns.io/1d6c6d
     - https://1.1.1.1/dns-query
   fallback-filter:
     geoip: true
