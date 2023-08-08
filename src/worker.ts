@@ -161,7 +161,8 @@ class Subscribe {
             const data = YAML.parse(html)
             return data['proxies']
         }
-        return [{'name': '订阅失败', 'type': 'vmess', 'server': '1.1.1.1', 'port': 1111, 'uuid': 'c478d142-03d9-32d0-8cd4-6e88f22e47a1', 'cipher': 'auto'}]
+        console.log(html)
+        return [{ name: '订阅失败', type: 'vmess', server: '1.1.1.1', port: 10010, uuid: 'db31d95d-91ca-4830-9055-09604c0472ab', alterId: 0, cipher: 'auto', udp: true, network: 'ws'}]
     }
 
     do_response(data, init = {}) {
