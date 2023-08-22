@@ -10,8 +10,10 @@ const node_url = `${base_api}/nodeinfo/`
 
 const toClash = (item) => {
     const network = item['net']
+    const name = item['ps'].replace(/No\.\d+_/i, "")
+
     let data = {
-        "name": item['ps'],
+        "name": name,
         "server": item['add'],
         "port": item['port'],
         "type": "vmess",
