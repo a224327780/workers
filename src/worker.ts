@@ -13,7 +13,13 @@ class Subscribe {
     private subscribeName: string = 'subscribe'
     private subscribeNodeName: string = 'subscribe_node'
     private mjjCookieName: string = 'share_cjy_cookie'
-    private mjjCookie
+    private mjjCookie: any = null
+    private mjjUserName: string = ''
+    private default_node = { 
+        name: '订阅失败', type: 'vmess', 
+        server: '1.1.1.1', port: '1111', uuid: '89dc0742-7baf-4eb7-8fda-5fe7818bedf0', 
+        alterId: 0, cipher: 'auto', udp: true, network: 'ws' 
+    }
     private jsonHeader = {
         headers: {
             "content-type": "application/json;charset=UTF-8",
@@ -29,6 +35,8 @@ class Subscribe {
         this._env = env
         this._request = request
         this._kv = env.SUBSCRIBE
+        this.mjjUserName = env.SECRET_MJJ_USERNAME
+        this.mjjCookieName = `${this.mjjCookieName}_${this.mjjUserName}`
 
         let cookie = await this._kv.get(this.mjjCookieName)
         if (cookie === null) {
@@ -37,10 +45,11 @@ class Subscribe {
             if (cookie !== null) {
                 console.log(`Logged in successfully! \nCookie: ${cookie}`)
                 await this._kv.put(this.mjjCookieName, cookie, {expirationTtl: 3600 * 5})
-                return
+            }else{
+                console.log(`[${env.SECRET_MJJ_USERNAME}] Login Fail.`)
             }
-            console.log(`[${env.SECRET_MJJ_USERNAME}] Login Fail.`)
         }
+
         this.mjjCookie = cookie
         await this.sleep(2)
     }
@@ -123,7 +132,7 @@ class Subscribe {
                 if(this.mjjCookie === null){
                     await this.init(this._env, this._request)
                 }
-                data = await get_nodes(this.mjjCookie)
+                data = await get_nodes(this.mjjCookie, this.mjjUserName, this.default_node)
             } else {
                 data = await this.update_subscribe_by_url(url)
             }
@@ -145,7 +154,7 @@ class Subscribe {
             let data = []
             console.log(`Update subscribe: ${i}`)
             if (url.includes('share.cjy.me')) {
-                data = await get_nodes(this.mjjCookie)
+                data = await get_nodes(this.mjjCookie, this.mjjUserName, this.default_node)
             } else {
                 data = await this.update_subscribe_by_url(url)
             }
@@ -162,7 +171,7 @@ class Subscribe {
             return data['proxies']
         }
         console.log(html)
-        return [{ name: '订阅失败', type: 'vmess', server: '1.1.1.1', port: 10010, uuid: 'db31d95d-91ca-4830-9055-09604c0472ab', alterId: 0, cipher: 'auto', udp: true, network: 'ws'}]
+        return [this.default_node]
     }
 
     do_response(data, init = {}) {

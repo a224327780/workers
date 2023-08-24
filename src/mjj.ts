@@ -49,7 +49,7 @@ const get_remain_traffic = async (cookie) => {
     return `${b} 剩余流量`
 }
 
-export const get_nodes = async (cookie) => {
+export const get_nodes = async (cookie: string, username: string, default_node: any) => {
     let response = await fetch(node_url, {headers: {Cookie: cookie}});
     let html = await response.text()
     const $ = cheerio.load(html)
@@ -71,12 +71,15 @@ export const get_nodes = async (cookie) => {
             console.log(e)
         }
     }
-    clashData.unshift(clashData[0])
-    clashData[0]['name'] = await get_remain_traffic(cookie)
+
+    let traffic_item = default_node
+    const traffic = await get_remain_traffic(cookie)
+    traffic_item['name'] = `${traffic}-${username}`
+    clashData.unshift(traffic_item)
     return clashData
 }
 
-export const login = async (username, password) => {
+export const login = async (username: string, password: string) => {
     let response = await fetch(login_url)
     let cookies = response.headers.getSetCookie()
 
