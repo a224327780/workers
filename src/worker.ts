@@ -137,7 +137,9 @@ class Subscribe {
                 data = await this.update_subscribe_by_url(url)
             }
             console.log(`[${name}] 节点数量: ${data.length}`)
-            await this._kv.put(subscribeNodeKey, JSON.stringify(data))
+            if(data && data.length){
+                await this._kv.put(subscribeNodeKey, JSON.stringify(data))
+            }
         }
         data.sort((a, b) => a.name.localeCompare(b.name));
         return this.do_response(YAML.stringify({proxies: data}), {'headers': this.jsonHeader})
@@ -158,7 +160,9 @@ class Subscribe {
             } else {
                 data = await this.update_subscribe_by_url(url)
             }
-            await this._kv.put(`${this.subscribeNodeName}_${i}`, JSON.stringify(data))
+            if(data && data.length){
+                await this._kv.put(`${this.subscribeNodeName}_${i}`, JSON.stringify(data))
+            }
             console.log(`[${i}] 节点数量: ${data.length}`)
         }
     }
@@ -171,7 +175,7 @@ class Subscribe {
             return data['proxies']
         }
         console.log(html)
-        return [this.default_node]
+        return []
     }
 
     do_response(data, init = {}) {

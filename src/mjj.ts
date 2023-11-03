@@ -10,7 +10,9 @@ const node_url = `${base_api}/nodeinfo/`
 
 const toClash = (item) => {
     const network = item['net']
-    const name = item['ps'].replace(/No\.\d+_/i, "")
+    const a = item['ps'].split('@')[0].replace(/No\.\d+_/i, "")
+    const result = item['ps'].match(/No\.\d+_/i)[0].replace('_', '')
+    const name = `${a}@${result}`
 
     let data = {
         "name": name,
