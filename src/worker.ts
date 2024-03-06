@@ -6,9 +6,9 @@ import YAML from 'yaml'
 
 class Subscribe {
 
-    private _request: Request;
-    private _env: Env
-    private _kv: KVNamespace;
+    private _request: any = null
+    private _env: any = null
+    private _kv: any = null
     private testUrl = 'http://www.gstatic.com/generate_204'
     private subscribeName: string = 'subscribe'
     private subscribeNodeName: string = 'subscribe_node'
@@ -35,22 +35,22 @@ class Subscribe {
         this._env = env
         this._request = request
         this._kv = env.SUBSCRIBE
-        this.mjjUserName = env.SECRET_MJJ_USERNAME
-        this.mjjCookieName = `${this.mjjCookieName}_${this.mjjUserName}`
+        // this.mjjUserName = env.SECRET_MJJ_USERNAME
+        // this.mjjCookieName = `${this.mjjCookieName}_${this.mjjUserName}`
 
-        let cookie = await this._kv.get(this.mjjCookieName)
-        if (cookie === null) {
-            console.log(`[${env.SECRET_MJJ_USERNAME}] start login.`)
-            cookie = await login(env.SECRET_MJJ_USERNAME, env.SECRET_MJJ_PASSWORD)
-            if (cookie !== null) {
-                console.log(`Logged in successfully! \nCookie: ${cookie}`)
-                await this._kv.put(this.mjjCookieName, cookie, {expirationTtl: 3600 * 5})
-            }else{
-                console.log(`[${env.SECRET_MJJ_USERNAME}] Login Fail.`)
-            }
-        }
+        // let cookie = await this._kv.get(this.mjjCookieName)
+        // if (cookie === null) {
+        //     console.log(`[${env.SECRET_MJJ_USERNAME}] start login.`)
+        //     cookie = await login(env.SECRET_MJJ_USERNAME, env.SECRET_MJJ_PASSWORD)
+        //     if (cookie !== null) {
+        //         console.log(`Logged in successfully! \nCookie: ${cookie}`)
+        //         await this._kv.put(this.mjjCookieName, cookie, {expirationTtl: 3600 * 5})
+        //     }else{
+        //         console.log(`[${env.SECRET_MJJ_USERNAME}] Login Fail.`)
+        //     }
+        // }
 
-        this.mjjCookie = cookie
+        // this.mjjCookie = cookie
         await this.sleep(2)
     }
 
@@ -93,8 +93,9 @@ class Subscribe {
             {'name': '自动选择', 'type': 'url-test', 'use': [], 'interval': 7200, 'url': this.testUrl},
         ]
         let j = 2
+        let metas = ['netbridge', 'BEST', '麻雀', '阿飞']
         for (let i in subscribes) {
-            if (userAgent && !userAgent.toLowerCase().includes('meta') && i === 'BEST') {
+            if (is_dev && metas.includes(i)) {
                 continue
             }
             const url = encodeURIComponent(subscribes[i])
@@ -128,14 +129,15 @@ class Subscribe {
         if (value !== null && value !== '[]' && force !== '1') {
             data = JSON.parse(value)
         } else {
-            if (url.includes('share.cjy.me')) {
-                if(this.mjjCookie === null){
-                    await this.init(this._env, this._request)
-                }
-                data = await get_nodes(this.mjjCookie, this.mjjUserName, this.default_node)
-            } else {
-                data = await this.update_subscribe_by_url(url)
-            }
+            // if (url.includes('share.cjy.me')) {
+            //     if(this.mjjCookie === null){
+            //         await this.init(this._env, this._request)
+            //     }
+            //     data = await get_nodes(this.mjjCookie, this.mjjUserName, this.default_node)
+            // } else {
+            //     data = await this.update_subscribe_by_url(url)
+            // }
+            data = await this.update_subscribe_by_url(url)
             console.log(`[${name}] 节点数量: ${data.length}`)
             if(data && data.length){
                 await this._kv.put(subscribeNodeKey, JSON.stringify(data))
@@ -155,11 +157,12 @@ class Subscribe {
             const url = subscribes[i]
             let data = []
             console.log(`Update subscribe: ${i}`)
-            if (url.includes('share.cjy.me')) {
-                data = await get_nodes(this.mjjCookie, this.mjjUserName, this.default_node)
-            } else {
-                data = await this.update_subscribe_by_url(url)
-            }
+            // if (url.includes('share.cjy.me')) {
+            //     data = await get_nodes(this.mjjCookie, this.mjjUserName, this.default_node)
+            // } else {
+            //     data = await this.update_subscribe_by_url(url)
+            // }
+            data = await this.update_subscribe_by_url(url)
             if(data && data.length){
                 await this._kv.put(`${this.subscribeNodeName}_${i}`, JSON.stringify(data))
             }
@@ -172,6 +175,14 @@ class Subscribe {
         let html = await response.text()
         if (html.includes('proxies')) {
             const data = YAML.parse(html)
+            if (url.includes('share.cjy.me')){
+                for(let i in data['proxies']){
+                    const name = data['proxies'][i]['name']
+                    const a = name.split('@')[0].replace(/No\.\d+_/i, "")
+                    const result = data['proxies'][i]['name'].match(/No\.\d+_/i)[0].replace('_', '')
+                    data['proxies'][i]['name'] = `${a}@${result}`
+                }
+            }
             return data['proxies']
         }
         console.log(html)

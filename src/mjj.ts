@@ -56,6 +56,7 @@ export const get_nodes = async (cookie: string, username: string, default_node: 
     let html = await response.text()
     const $ = cheerio.load(html)
     const items = $('div.node-cell')
+    console.log(html)
     let clashData = []
     for (let i = 0; i <= items.length; i++) {
         let status = $(items[i]).find('.card-header-title span').text()
