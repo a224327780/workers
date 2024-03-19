@@ -95,9 +95,9 @@ class Subscribe {
         let j = 2
         let metas = ['netbridge', 'BEST', '麻雀', '阿飞']
         for (let i in subscribes) {
-            if (is_dev && metas.includes(i)) {
-                continue
-            }
+            // if (is_dev && metas.includes(i)) {
+            //     continue
+            // }
             const url = encodeURIComponent(subscribes[i])
             const domain = this._request.url.match(/^https?:\/\/([^/:?#]+)(?=[/:?#]|$)/i);
             let provider = JSON.parse(JSON.stringify(this.providerTemplate))
